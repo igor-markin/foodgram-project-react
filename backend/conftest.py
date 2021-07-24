@@ -1,10 +1,10 @@
 import pytest
-from django.utils import timezone
 
-from recipes.models import Ingredient, Recipe, Tag
+from api.models import Ingredient, Recipe, Tag
 
 
 @pytest.fixture
+@pytest.mark.django_db(transaction=True)
 def new_user(django_user_model):
     return django_user_model.objects.create(
         email='9588604@gmail.com',
@@ -16,6 +16,7 @@ def new_user(django_user_model):
 
 
 @pytest.fixture
+@pytest.mark.django_db(transaction=True)
 def new_user_2(django_user_model):
     return django_user_model.objects.create(
         email='123456@gmail.com',
@@ -27,34 +28,38 @@ def new_user_2(django_user_model):
 
 
 @pytest.fixture
+@pytest.mark.django_db(transaction=True)
 def ingredient():
     return Ingredient(name='Огурец', measurement_unit='шт')
 
 
 @pytest.fixture
+@pytest.mark.django_db(transaction=True)
 def ingredient_2():
     return Ingredient(name='Соль', measurement_unit='гр')
 
 
 @pytest.fixture
+@pytest.mark.django_db(transaction=True)
 def tag():
     return Tag(name='Завтрак', color='#000000', slug='breakfast')
 
 
 @pytest.fixture
+@pytest.mark.django_db(transaction=True)
 def tag_2():
     return Tag(name='Обед', color='#eeeeee', slug='lunch')
 
 
 @pytest.fixture
+@pytest.mark.django_db(transaction=True)
 def recipe(ingredient, ingredient_2, tag, tag_2, new_user):
     recipe = Recipe.objects.create(
         author=new_user,
         name='Огурец с солью',
         image='http://localhost/media/mmm.jpeg',
         text='Вкусный огурец с солью на завтрак и обед',
-        cooking_time=1,
-        pub_date=timezone.now()
+        cooking_time=1
     )
 
     recipe.ingredients.add(*Ingredient.objects.all())
