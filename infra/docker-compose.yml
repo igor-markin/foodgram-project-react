@@ -3,11 +3,12 @@ services:
 
   db:
     env_file: 
-      - .env
+      - ../backend/.env
     image: postgres:12.4
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     restart: always
+  
   frontend:
     build:
       context: ../frontend
@@ -16,6 +17,7 @@ services:
       - ../frontend/:/app/result_build/
     depends_on:
       - db
+  
   backend:
     build:
       context: ../backend
@@ -27,7 +29,8 @@ services:
     depends_on:
       - db
     env_file:
-      - ./.env
+      - ../backend/.env
+  
   nginx:
     image: nginx:1.19.3
     ports:
@@ -40,7 +43,6 @@ services:
       - ../docs/redoc.html:/usr/share/nginx/html/api/docs/redoc.html
       - ../docs/openapi-schema.yml:/usr/share/nginx/html/api/docs/openapi-schema.yml
     restart: always
-    
     depends_on:
       - backend
       - frontend
