@@ -1,5 +1,5 @@
 import pytest
-from api.models import IngredientInRecipe
+
 
 @pytest.mark.django_db(transaction=True)
 @pytest.mark.parametrize('url', ['/api/tags/', '/api/tags/{id}/'])
@@ -92,24 +92,21 @@ def test_create_recipe_with_unauth_user(client):
 
 
 @pytest.mark.django_db(transaction=True)
-def test_create_recipe_with_auth_user(api_user_client, user, ingredient,
-                                      ingredient_2, tag, tag_2):
-
+def test_create_recipe_with_auth_user(api_user_client, ingredient, tag):
     data = {
-        'ingredients': [{'id': ingredient.pk, 'amount': 1},
-                        {'id': ingredient_2.pk, 'amount': 1}],
-        'tags': [tag.pk, tag_2.pk],
-        'author': user,
-        'name': 'Банан в шоколаде',
-        'image': 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAA'
-                 'BieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw'
-                 '4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==',
-        'text': 'Непревзойдённый вкус мягкого банана и теплого шоколада',
-        'cooking_time': 120
+        "tags": [tag.pk],
+        "name": "test",
+        "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAgMAAA"
+                 "BieywaAAAACVBMVEUAAAD///9fX1/S0ecCAAAACXBIWXMAAA7EAAAOxAGVKw"
+                 "4bAAAACklEQVQImWNoAAAAggCByxOyYQAAAABJRU5ErkJggg==",
+        "text": "test",
+        "cooking_time": 1,
+        "ingredients": [
+            {"id": ingredient.pk, "amount": 10}
+        ]
     }
 
     r = api_user_client.post('/api/recipes/', data=data)
-    print(r.json())
     assert r.status_code == 201
 
     r = api_user_client.post('/api/recipes/', data=data)
@@ -119,7 +116,6 @@ def test_create_recipe_with_auth_user(api_user_client, user, ingredient,
 @pytest.mark.django_db(transaction=True)
 def test_get_recipe(api_client, recipe):
     r = api_client.get(f'/api/recipes/{recipe.pk}/')
-    print(r.json())
     assert r.status_code == 200
 
     r = api_client.get('/api/recipes/999/')
@@ -134,10 +130,11 @@ def test_put_recipe_with_unauth_user(client):
 
 @pytest.mark.django_db(transaction=True)
 def test_put_recipe_with_auth_user(api_user_client, recipe,
-                                   ingredient, ingredient_2,
-                                   tag, tag_2, user):
+                                   ingredient, tag, tag_2, user):
     data = {
-        'ingredients': [[ingredient.pk, 1], [ingredient_2.pk, 1]],
+        'ingredients': [
+            {"id": ingredient.pk, "amount": 111}
+        ],
         'tags': [tag.pk, tag_2.pk],
         'author': user,
         'name': 'Банан в шоколаде',
@@ -148,7 +145,6 @@ def test_put_recipe_with_auth_user(api_user_client, recipe,
         'cooking_time': 120
     }
     r = api_user_client.put(f'/api/recipes/{recipe.pk}/', data=data)
-    print(r.json())
     assert r.status_code == 200
 
     data = {'cooking_time': -90}
