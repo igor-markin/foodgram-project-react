@@ -11,5 +11,8 @@ class CustomUser(AbstractUser):
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
     USERNAME_FIELD = 'email'
 
+    class Meta:
+        ordering = ['-id']
+
     def __str__(self):
         return self.username

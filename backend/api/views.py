@@ -29,7 +29,7 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 class RecipesViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     filter_backends = [django_filters.rest_framework.DjangoFilterBackend]
-    filter_class = RecipeFilter
+    filterset_class = RecipeFilter
     pagination_class = PageNumberPaginatorModified
     permission_classes = [AdminOrAuthorOrReadOnly]
 
