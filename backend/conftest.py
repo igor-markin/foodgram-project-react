@@ -1,9 +1,7 @@
 import pytest
-
-from api.models import Ingredient, Recipe, Tag, IngredientInRecipe
-
-
 from rest_framework.test import APIClient
+
+from api.models import Ingredient, IngredientInRecipe, Recipe, Tag
 
 
 @pytest.fixture
@@ -28,6 +26,12 @@ def api_client():
 @pytest.fixture
 def api_user_client(user, api_client):
     api_client.force_authenticate(user)
+    return api_client
+
+
+@pytest.fixture
+def api_user_client_2(new_user_2, api_client):
+    api_client.force_authenticate(new_user_2)
     return api_client
 
 

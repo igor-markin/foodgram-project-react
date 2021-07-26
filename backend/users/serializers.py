@@ -1,26 +1,26 @@
+from django.contrib.auth import get_user_model
 from djoser.serializers import UserCreateSerializer
 from rest_framework import serializers
 
 from api.models import Follow
 
-from .models import CustomUser
+User = get_user_model()
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
-
     class Meta(UserCreateSerializer.Meta):
-        model = CustomUser
-        fields = ['id', 'email', 'username', 'password', 'first_name',
-                  'last_name']
+        model = User
+        fields = ['id', 'email', 'username', 'password',
+                  'first_name', 'last_name']
 
 
 class UserSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
-        model = CustomUser
-        fields = ['email', 'id', 'username', 'first_name', 'last_name',
-                  'is_subscribed']
+        model = User
+        fields = ['email', 'id', 'username', 'first_name',
+                  'last_name', 'is_subscribed']
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request')

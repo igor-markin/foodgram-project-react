@@ -1,34 +1,47 @@
+from django.contrib.auth import get_user_model
+from django.db import transaction
 from djoser.serializers import UserSerializer as BaseUserSerializer
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
-from .models import (CustomUser, Favorite, Follow, Ingredient,
-                     IngredientInRecipe, Recipe, ShoppingList, Tag)
+from .models import *
+
+__all__ = ['TagSerializer', 'IngredientSerializer', 'FollowSerializer',
+           'UserSerializer', 'AddFavouriteRecipeSerializer',
+           'ShoppingListRecipeSerializer', 'ListRecipeUserSerializer',
+           'IngredientInRecipeSerializer', 'CreateRecipeSerializer',
+           'IngredientInRecipeSerializerToCreateRecipe',
+           'ListRecipeSerializer', 'RecipeSerializer',
+           'ShowFollowersSerializer', 'ShowFollowerRecipeSerializer',
+           'ShowIngredientsSerializer', 'UserSerializerModified',
+           'ShowRecipeSerializer', 'AddIngredientToRecipeSerializer']
+
+User = get_user_model()
 
 
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
-        fields = '__all__'
+        fields = ['name', 'hex_color', 'slug']
 
 
 class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredient
-        fields = '__all__'
+        fields = ['name', 'measurement_unit']
 
 
 class FollowSerializer(serializers.ModelSerializer):
     class Meta:
         model = Follow
-        fields = '__all__'
+        fields = ['user', 'author']
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = CustomUser
-        fields = ['email', 'id', 'username', 'first_name', 'last_name',
-                  'purchases']
+        model = User
+        fields = ['email', 'id', 'username', 'first_name',
+                  'last_name', 'purchases']
 
 
 class AddFavouriteRecipeSerializer(serializers.ModelSerializer):
@@ -47,9 +60,9 @@ class ListRecipeUserSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
-        model = CustomUser
-        fields = ['email', 'id', 'username', 'first_name', 'last_name',
-                  'is_subscribed']
+        model = User
+        fields = ['email', 'id', 'username', 'first_name',
+                  'last_name','is_subscribed']
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request')
@@ -144,7 +157,7 @@ class ShowFollowersSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField('check_if_subscribed')
 
     class Meta:
-        model = CustomUser
+        model = User
         fields = ['email', 'id', 'username', 'first_name', 'last_name',
                   'is_subscribed', 'recipes', 'recipes_count']
 
@@ -238,6 +251,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         fields = ['id', 'tags', 'author', 'ingredients', 'name', 'image',
                   'text', 'cooking_time']
 
+    @transaction.atomic
     def create(self, validated_data):
         tags_data = validated_data.pop('tags')
         ingredients_data = validated_data.pop('ingredients')
@@ -246,9 +260,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     'Количество ингредиента должно быть больше нуля!')
         author = self.context.get('request').user
-        recipe = Recipe.objects.create(
-            author=author, **validated_data)
-        recipe.save()
+        recipe = Recipe.objects.create(author=author, **validated_data)
         recipe.tags.set(tags_data)
         for ingredient in ingredients_data:
             ingredient_model = Ingredient.objects.get(id=ingredient['id'])
@@ -260,6 +272,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
             )
         return recipe
 
+    @transaction.atomic
     def update(self, instance, validated_data):
         ingredient_data = validated_data.pop('ingredients')
         tags_data = validated_data.pop('tags')

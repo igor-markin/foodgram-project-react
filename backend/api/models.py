@@ -1,17 +1,28 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.html import format_html
 
-from users.models import CustomUser
+User = get_user_model()
+
+__all__ = [
+    'Follow',
+    'Tag',
+    'Ingredient',
+    'Recipe',
+    'IngredientInRecipe',
+    'ShoppingList',
+    'Favorite',
+]
 
 
 class Follow(models.Model):
     user = models.ForeignKey(
-        CustomUser, on_delete=models.CASCADE,
+        User, on_delete=models.CASCADE,
         related_name='followers',
         verbose_name='Подписчик'
     )
     author = models.ForeignKey(
-        CustomUser, on_delete=models.CASCADE,
+        User, on_delete=models.CASCADE,
         related_name='following',
         verbose_name='Автор'
     )
@@ -74,7 +85,7 @@ class Ingredient(models.Model):
 
 class Recipe(models.Model):
     author = models.ForeignKey(
-        CustomUser,
+        User,
         on_delete=models.PROTECT,
         related_name='recipes',
         verbose_name='Автор'
@@ -137,7 +148,7 @@ class IngredientInRecipe(models.Model):
 
 class ShoppingList(models.Model):
     user = models.ForeignKey(
-        CustomUser,
+        User,
         on_delete=models.CASCADE,
         related_name='purchases',
         verbose_name='Пользователь'
@@ -160,7 +171,7 @@ class ShoppingList(models.Model):
 
 class Favorite(models.Model):
     user = models.ForeignKey(
-        CustomUser,
+        User,
         on_delete=models.CASCADE,
         related_name='favorite_subscriber',
         verbose_name='Пользователь'
