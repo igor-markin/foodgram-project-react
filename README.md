@@ -11,13 +11,13 @@
 - nginx - образ web сервера nginx
 #### Команда клонирования репозитория:
 ```bash
-git clone https://github.com/PavelKhanOff/foodgram-project-react 
+git clone https://github.com/...
 ```
 #### Запуск проекта:
 - [Установите Докер](https://docs.docker.com/engine/install/)
 - Выполнить команду: 
 ```bash
-docker pull pavelkhan/foodgram-project-react :latest
+docker pull .../foodgram-project-react :latest
 ```
 #### Первоначальная настройка Django:
 ```bash
@@ -40,11 +40,11 @@ DB_HOST=db_host
 DB_PORT=db_port
 
 #### Автор:
-Автор Павел Хан. Задание было выполнено в рамках курса от Yandex Praktikum бэкенд разработчик.
+Автор Игорь Маркин. Задание было выполнено в рамках курса от Yandex Praktikum бэкенд разработчик.
 #### Workflow badge:
-https://github.com/pavelkhanoff/foodgram-project-react/actions/workflows/main.yml/badge.svg
+https://github.com/.../foodgram-project-react/actions/workflows/main.yml/badge.svg
 #### Server address:
-130.193.52.127
+IP
 #### Superuser pass&email:
 email: admin@admin.ru
 pass: admin
